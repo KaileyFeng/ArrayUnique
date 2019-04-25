@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+
+</body>
+<script>
+  // 数组去重 并且 不改变原数组
+  let ary = [1, 2, 3, 4, 3, 2, 1];
+  // 1,对象键值对处理(推荐)
+
+  Array.prototype.myUnique = function () {
+    // this =>  要操作的数组 如果不想改变原有的数组  需要克隆一份要操作的数组 那么操作的就是克隆的数组
+
+    // 克隆一份数组   let _this = this.slice(0) || [...this]
+    let _this = this.slice(0);
+    let obj = {}
+
+    for (let i = 0; i < _this.length; i++) {
+      let item = _this[i];
+      if (typeof obj[item] !== 'undefined') {
+        // 当前迭代的这一项在数组中已经存才 我们把这一项在数组中干掉
+        // _this.slice(i,0) // 后面一项向前移 不仅消耗性能 还会造成数组塌陷的问题
+
+        // 让数组的最后一项等于当前项 然后截取掉最后一项
+        _this[i] = this[_this.length - 1];
+        _this.length--;
+        i--;
+      }
+      obj[item] = true;
+    }
+    obj = null
+    return _this
+  }
+  let unique = ary.myUnique();
+  console.log(unique)
+
+
+
+  // 2，双循环(不推荐)
+
+  Array.prototype.myUnique = function () {
+    let _this = [...this];
+
+    for (let i = 0; i < _this.length; i++) {
+      let item = _this[i];
+      for (let j = i + 1; j < _this.length; j++) {
+
+        // 也可以利用indexof  获取当前项在数组红第一次出现位置的索引 也能判断是否存在这一项 如果不存在获取的索引是-1 这个方法不兼容IE6-8
+        if (item === _this[j]) {
+          _this[j] = _this[_this.length - 1];
+          _this.length--;
+          j--
+        }
+      }
+    }
+
+    return _this;
+  }
+  let unique = ary.myUnique();
+  console.log(unique)
+
+  // 3.双循环 indexof
+  Array.prototype.myUnique = function () {
+    let _this = this;
+    for (let i = 0; i < _this.length; i++) {
+      let item = _this[i];
+      let nextIndex = _this.slice(i + 1);
+      if (nextIndex.indexOf(item) > -1) {
+        _this[i] = _this[_this.length - 1];
+        _this.length--;
+        i--
+      }
+    }
+    return _this
+  }
+  let unique = ary.myUnique();
+  console.log(unique)
+
+
+
+  // 4.排序后相邻去除法
+  // 先把数组进行排序 验证当前项是否和后一项是否相同 如果不相同 就放进去新的数组里面
+  Array.prototype.myUnique = function () {
+    let _this = this.slice(0).sort((a,b)=>a-b);
+    let newAry = [];
+    for (let o = 0; o < _this.length; o++) {
+      let item = _this[o];
+      let nextIndex = _this[o+1];
+      if(item !== nextIndex){
+        newAry.push(item)
+      }
+    }
+    return newAry;
+  }
+
+  let unique = ary.myUnique();
+  console.log(unique)
+</script>
+
+</html>
